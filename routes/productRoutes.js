@@ -20,9 +20,9 @@ router.put('/:id', updateProduct);
 router.delete('/:id', );
 
 // Search products by Keyword
-router.get('/search', searchProductByKeyword);
+router.get('/search/keyword', searchProductByKeyword);
 
 // Fetch filter options
-router.get('/filter-options', filterOptions);
+router.get('/filter/options', filterOptions);
 
 module.exports = router;

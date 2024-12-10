@@ -2,7 +2,6 @@ const Product = require('../models/productModel');
 
 exports.createProduct = async (req, res) => {
     try {
-        console.log(req.body)
         const product = new Product(req.body);
         await product.save();
         res.status(201).json(product);
@@ -52,20 +51,22 @@ exports.deleteProduct = async (req, res) => {
 
 exports.searchProductByKeyword = async (req, res) => {
     const { query } = req.query;
-    const searchQuery = query.toLowerCase()
+    const searchQuery = query.toLowerCase();
+
     try {
         const products = await Product.find({
-            $where: function() {
-                return Object.values(this).some(value => 
-                    typeof value === 'string' && value.toLowerCase().includes(searchQuery)
-                );
-            }
+            $or: [
+                { name: { $regex: searchQuery, $options: 'i' } }, // Case-insensitive search in name
+                { description: { $regex: searchQuery, $options: 'i' } }, // Case-insensitive search in description
+                { category: { $regex: searchQuery, $options: 'i' } } // Case-insensitive search in category
+            ]
         });
+
         res.json(products);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
-}
+};
 
 exports.filterOptions = async (req, res) => {
     try {
